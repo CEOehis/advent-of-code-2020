@@ -10,11 +10,7 @@ function getLineReader() {
   });
 }
 
-function partOne() {
-  const lineReader = getLineReader();
-  let totalValidPasswords = 0;
-
-  lineReader.on('line', (entry) => {
+function parseEntry(entry) {
     const [policy, password] = entry.split(': ');
     const numberRegex = /\d+|[a-zA-Z]/g;
 
@@ -25,6 +21,15 @@ function partOne() {
     }
 
     const [min, max, character] = policyValues;
+    return [min, max, character, password];
+}
+
+function partOne() {
+  const lineReader = getLineReader();
+  let totalValidPasswords = 0;
+
+  lineReader.on('line', (entry) => {
+    const [min, max, character, password] = parseEntry(entry);
 
     let charCount = 0;
     for (let i = 0; i < password.length; i++) {
@@ -45,16 +50,7 @@ function partTwo() {
   let totalValidPasswords = 0;
 
   lineReader.on('line', (entry) => {
-    const [policy, password] = entry.split(': ');
-    const numberRegex = /\d+|[a-zA-Z]/g;
-
-    let result;
-    let policyValues = [];
-    while((result= numberRegex.exec(policy))) {
-      policyValues.push(result[0]);
-    }
-
-    const [first, second, character] = policyValues;
+   const [first, second, character, password] = parseEntry(entry);
 
     let seen = false;
 
